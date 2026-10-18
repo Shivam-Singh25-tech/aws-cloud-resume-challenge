@@ -24,6 +24,8 @@ jobs:
 
       - name: Upload website to S3
         run: |
-          aws s3 sync . s3://${{ secrets.AWS_S3_BUCKET }} \
+          aws s3 sync . s3://shivamtech.site \
             --exclude ".git/*" \
-            --exclude ".github/*"
+            --exclude ".github/*" \
+            --exclude "README.md" \
+            --delete
