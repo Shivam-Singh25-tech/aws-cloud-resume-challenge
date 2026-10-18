@@ -48,20 +48,42 @@ var typed_2 = new Typed('#typed_2', {
 
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
-        e.preventDefault();
+        const targetSelector = this.getAttribute('href');
 
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
+        if (!targetSelector || targetSelector === '#') {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+
+        const target = document.querySelector(targetSelector);
+        if (!target) return;
+
+        e.preventDefault();
+        target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
         });
     });
 });
 //MAIN PArts 
 const counter = document.querySelector(".counter-number");
 async function updateCounter() {
-    let response = await fetch(
-        "https://37wtfz2vwmcgbbs37bnb3fivja0fqwnh.lambda-url.ap-south-1.on.aws/"
-    );
-    let data = await response.json();
-    counter.innerHTML = `👀 Views: ${data}`;
+    if (!counter) return;
+
+    try {
+        const response = await fetch(
+            "https://37wtfz2vwmcgbbs37bnb3fivja0fqwnh.lambda-url.ap-south-1.on.aws/"
+        );
+
+        if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        counter.innerHTML = `👀 Views: ${data}`;
+    } catch (error) {
+        counter.innerHTML = '👀 Views: unavailable';
+    }
 }
 updateCounter();
